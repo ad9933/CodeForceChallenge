@@ -18,7 +18,6 @@ public class Main {
 		//Store inputs
 		Scanner scanner = new Scanner(System.in);
 		
-		System.out.print("Number of Cases : ");
 		t = Integer.parseInt(scanner.nextLine());
 		
 		TestCase[] cases = new TestCase[t];
@@ -33,10 +32,18 @@ public class Main {
 		//Process inputs
 		for (int caseIdx = 0; caseIdx < t; caseIdx++) {
 			
+			if(cases[caseIdx].x == cases[caseIdx].n && cases[caseIdx].y == cases[caseIdx].n) {
+				System.out.println(cases[caseIdx].n + " " + cases[caseIdx].n);
+				continue;
+			}
+			
 			int myScore = cases[caseIdx].x + cases[caseIdx].y;
 			int lastUsedX = -1;
 			int lastUsedY = -1;						//-1 if no condition.
 			boolean firstRun = true;
+			
+			int bestCase = 0;
+			int worstCase = 0;
 			
 			//finds cases that better persons in first rounds scores more than theGuy.
 			
@@ -73,7 +80,52 @@ public class Main {
 				}
 			}
 			
-			System.out.println((lastUsedX < lastUsedY) ? lastUsedX : lastUsedY);
+			bestCase = (lastUsedX < lastUsedY) ? lastUsedX : lastUsedY;
+			
+			
+			//Worst Case
+			
+			//Initialize
+			firstRun = true;
+			lastUsedX = -1;
+			lastUsedY = -1;
+			
+			if(cases[caseIdx].x == cases[caseIdx].n)
+				lastUsedX = cases[caseIdx].n;
+			
+			for(int betterPerson = cases[caseIdx].x + 1; betterPerson <= cases[caseIdx].n; betterPerson++) {
+				
+				
+				if(myScore - betterPerson > 0) {
+					lastUsedX = betterPerson;
+					firstRun = false;
+				} else {
+					if (firstRun)
+						lastUsedX = cases[caseIdx].x;
+					break;
+				}
+			}
+			
+			//same goes to second round.
+			if(cases[caseIdx].y == cases[caseIdx].n)
+				lastUsedY = cases[caseIdx].n;
+			
+			firstRun = true;
+			for(int betterPerson = cases[caseIdx].y + 1; betterPerson <= cases[caseIdx].n; betterPerson++) {
+				
+				if(myScore - betterPerson > 0) {
+					lastUsedY = betterPerson;
+					firstRun = false;
+				} else {
+					if(firstRun)
+						lastUsedY = cases[caseIdx].y;
+					break;
+				}
+			}
+			
+			worstCase = (lastUsedX - 1 < lastUsedY - 1) ? lastUsedX : lastUsedY;
+			System.out.println(bestCase + " " + worstCase);
+			scanner.close();
 			
 		}
 	}
@@ -86,19 +138,12 @@ class TestCase {
 	int x;
 	int y;
 	
-	int worst;
-	int best;
-	
 	TestCase(String inputString) {
 		String[] inputArray = inputString.split(" ");
 		
-		if(inputArray.length != 3)
-			System.out.println("Error!!! Length not 3.");
-		else {
-			n = Integer.parseInt(inputArray[0]);
-			x = Integer.parseInt(inputArray[1]);
-			y = Integer.parseInt(inputArray[2]);
-		}
+		n = Integer.parseInt(inputArray[0]);
+		x = Integer.parseInt(inputArray[1]);
+		y = Integer.parseInt(inputArray[2]);
 		
 	}
 }
